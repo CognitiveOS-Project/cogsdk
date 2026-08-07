@@ -27,7 +27,7 @@ func startDaemonServer(t *testing.T) string {
 				return
 			}
 			go func(c net.Conn) {
-				defer c.Close()
+				defer func() { _ = c.Close() }()
 				dec := json.NewDecoder(c)
 				enc := json.NewEncoder(c)
 				for {
@@ -37,13 +37,13 @@ func startDaemonServer(t *testing.T) string {
 					}
 					resp := daemon.NewEnvelope("tune_accepted", "cognitiveosd", daemon.OKPayload(nil))
 					resp.ID = env.ID
-					enc.Encode(resp)
+					_ = enc.Encode(resp)
 				}
 			}(conn)
 		}
 	}()
 
-	t.Cleanup(func() { ln.Close() })
+	t.Cleanup(func() { _ = ln.Close() })
 	return path
 }
 
@@ -54,7 +54,7 @@ func TestTune(t *testing.T) {
 	if err != nil {
 		t.Fatalf("dial: %v", err)
 	}
-	defer dc.Close()
+	defer func() { _ = dc.Close() }()
 
 	dc.SetReadTimeout(5 * time.Second)
 	defer dc.ClearReadTimeout()

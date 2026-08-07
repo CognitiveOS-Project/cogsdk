@@ -10,8 +10,8 @@ import (
 // TestServerClientRoundTrip wires a Server and a Client over an in-memory pipe.
 func TestServerClientRoundTrip(t *testing.T) {
 	serverConn, clientConn := net.Pipe()
-	defer serverConn.Close()
-	defer clientConn.Close()
+	defer func() { _ = serverConn.Close() }()
+	defer func() { _ = clientConn.Close() }()
 
 	srv := NewWithVersion("test-bridge", "1.0.0")
 	srv.Tools = []Tool{{
@@ -29,7 +29,7 @@ func TestServerClientRoundTrip(t *testing.T) {
 		return args["text"], nil
 	})
 
-	go srv.Run(serverConn, serverConn)
+	go func() { _ = srv.Run(serverConn, serverConn) }()
 
 	client := NewClient(clientConn, clientConn)
 
@@ -55,11 +55,11 @@ func TestServerClientRoundTrip(t *testing.T) {
 
 func TestServerToolNotFound(t *testing.T) {
 	serverConn, clientConn := net.Pipe()
-	defer serverConn.Close()
-	defer clientConn.Close()
+	defer func() { _ = serverConn.Close() }()
+	defer func() { _ = clientConn.Close() }()
 
 	srv := New("empty-bridge")
-	go srv.Run(serverConn, serverConn)
+	go func() { _ = srv.Run(serverConn, serverConn) }()
 
 	client := NewClient(clientConn, clientConn)
 	res, err := client.Call("cognitiveos.nope.nope", nil)
@@ -77,15 +77,15 @@ func TestServerToolNotFound(t *testing.T) {
 
 func TestServerHandlerError(t *testing.T) {
 	serverConn, clientConn := net.Pipe()
-	defer serverConn.Close()
-	defer clientConn.Close()
+	defer func() { _ = serverConn.Close() }()
+	defer func() { _ = clientConn.Close() }()
 
 	srv := New("error-bridge")
 	srv.Handle("cognitiveos.test.fail", func(args map[string]interface{}) (interface{}, error) {
 		return nil, errors.New("boom")
 	})
 
-	go srv.Run(serverConn, serverConn)
+	go func() { _ = srv.Run(serverConn, serverConn) }()
 
 	client := NewClient(clientConn, clientConn)
 	res, err := client.Call("cognitiveos.test.fail", nil)
@@ -110,11 +110,11 @@ func TestParseErrorText(t *testing.T) {
 
 func TestServerHealthcheck(t *testing.T) {
 	serverConn, clientConn := net.Pipe()
-	defer serverConn.Close()
-	defer clientConn.Close()
+	defer func() { _ = serverConn.Close() }()
+	defer func() { _ = clientConn.Close() }()
 
 	srv := New("health-bridge")
-	go srv.Run(serverConn, serverConn)
+	go func() { _ = srv.Run(serverConn, serverConn) }()
 
 	// Send the healthcheck notification; the server replies with
 	// {"type":"healthcheck_ok",...} on the same writer.

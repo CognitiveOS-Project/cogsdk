@@ -28,7 +28,7 @@ func startTestServer(t *testing.T) string {
 				return
 			}
 			go func(c net.Conn) {
-				defer c.Close()
+				defer func() { _ = c.Close() }()
 				dec := json.NewDecoder(c)
 				enc := json.NewEncoder(c)
 				for {
@@ -41,13 +41,13 @@ func startTestServer(t *testing.T) string {
 						Effect: "waking from idle state",
 					})
 					resp.ID = env.ID
-					enc.Encode(resp)
+					_ = enc.Encode(resp)
 				}
 			}(conn)
 		}
 	}()
 
-	t.Cleanup(func() { ln.Close() })
+	t.Cleanup(func() { _ = ln.Close() })
 	return path
 }
 
@@ -58,7 +58,7 @@ func TestClientRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("dial: %v", err)
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	c.SetReadTimeout(5 * time.Second)
 	defer c.ClearReadTimeout()
@@ -91,7 +91,7 @@ func TestClientRoundTripMismatchedID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("dial: %v", err)
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	// Send an envelope with a bogus ID, then a valid one; the client should
 	// skip the mismatched response and surface the matching one.
@@ -112,8 +112,8 @@ func TestClientRoundTripMismatchedID(t *testing.T) {
 }
 
 func TestDefaultSocketPathOverride(t *testing.T) {
-	os.Setenv("COGNITIVEOS_SOCKET", "/tmp/test-daemon.sock")
-	defer os.Unsetenv("COGNITIVEOS_SOCKET")
+	_ = os.Setenv("COGNITIVEOS_SOCKET", "/tmp/test-daemon.sock")
+	defer func() { _ = os.Unsetenv("COGNITIVEOS_SOCKET") }()
 
 	if got := DefaultSocketPath(); got != "/tmp/test-daemon.sock" {
 		t.Fatalf("got %q, want override", got)

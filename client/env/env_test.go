@@ -60,9 +60,8 @@ func TestResolveNoPlaceholders(t *testing.T) {
 }
 
 func TestResolveOS(t *testing.T) {
-	os.Setenv("COGSDK_TEST_VAR", "hi")
-	defer os.Unsetenv("COGSDK_TEST_VAR")
-
+	_ = os.Setenv("COGSDK_TEST_VAR", "hi")
+	defer func() { _ = os.Unsetenv("COGSDK_TEST_VAR") }()
 	out, err := Resolve([]byte("${COGSDK_TEST_VAR}"), EnvLookup)
 	if err != nil {
 		t.Fatalf("resolve: %v", err)

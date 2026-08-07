@@ -115,10 +115,10 @@ func (c *Client) Request(msgType string, payload interface{}) (Envelope, error) 
 
 // SetReadTimeout sets a read deadline for RoundTrip/ReadResponse calls.
 func (c *Client) SetReadTimeout(d time.Duration) {
-	c.conn.SetReadDeadline(time.Now().Add(d))
+	_ = c.conn.SetReadDeadline(time.Now().Add(d))
 }
 
 // ClearReadTimeout removes any read deadline.
 func (c *Client) ClearReadTimeout() {
-	c.conn.SetReadDeadline(time.Time{})
+	_ = c.conn.SetReadDeadline(time.Time{})
 }

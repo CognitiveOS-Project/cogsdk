@@ -94,7 +94,7 @@ func (s *Server) handleMessage(line string, w io.Writer) {
 	}
 	resp := s.dispatch(&req)
 	reply, _ := json.Marshal(resp)
-	fmt.Fprintln(w, string(reply))
+	_, _ = fmt.Fprintln(w, string(reply))
 }
 
 func (s *Server) handleNotification(method string, params json.RawMessage, w io.Writer) {
@@ -106,7 +106,7 @@ func (s *Server) handleNotification(method string, params json.RawMessage, w io.
 			"tools_healthy":  true,
 		}
 		reply, _ := json.Marshal(resp)
-		fmt.Fprintln(w, string(reply))
+		_, _ = fmt.Fprintln(w, string(reply))
 	}
 }
 

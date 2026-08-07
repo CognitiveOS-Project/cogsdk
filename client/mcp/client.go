@@ -136,7 +136,7 @@ func (c *Client) roundTrip(req rpcRequest) (*rpcResponse, error) {
 		return nil, fmt.Errorf("send to MCP server: %w", err)
 	}
 
-	for c.scanner.Scan() {
+	if c.scanner.Scan() {
 		var resp rpcResponse
 		if err := json.Unmarshal(c.scanner.Bytes(), &resp); err != nil {
 			return nil, fmt.Errorf("parse MCP response: %w", err)
