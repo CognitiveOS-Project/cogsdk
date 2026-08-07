@@ -53,7 +53,8 @@ All repos follow the git workflow defined in root `.opencode/instructions/git-wo
 
 ## Dependencies
 
-None at present (standard library only).
+- `github.com/santhosh-tekuri/jsonschema/v6` — in-process schema validation (`client/mcp`)
+- Standard library otherwise
 
 ## Cloning Convention
 
