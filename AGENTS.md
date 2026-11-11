@@ -51,6 +51,15 @@ All repos follow the git workflow defined in root `.opencode/instructions/git-wo
 - No rebase — prefer `git pull` (merge)
 - Commit types: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`
 
+## Process Enforcements (MANDATORY)
+
+All work in this repo MUST follow the CognitiveOS Process Enforcements:
+
+- `product-specs/docs/ENFORCEMENTS.md` — SPECv1, GHW, VibeLeading, ABSEv1
+- `sdlc/docs/ENFORCEMENTS.md` — same content (mirror)
+
+These enforcements are binding on every contributor, agent, and automation. No work may bypass them except on explicit user instruction (maintainer emergency).
+
 ## Dependencies
 
 - `github.com/santhosh-tekuri/jsonschema/v6` — in-process schema validation (`client/mcp`)
